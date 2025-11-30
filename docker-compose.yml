@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: school_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: school_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # En desarrollo, usamos volumes para hot-reload, pero por ahora
+    # vamos a correrlo localmente con npm run start:dev para facilitar las migraciones
+    # Este servicio lo activaremos más adelante para producción.
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://admin:adminpassword@postgres:5432/school_db
+
+volumes:
+  postgres_data:
