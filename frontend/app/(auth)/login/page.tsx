@@ -35,8 +35,14 @@ export default function LoginPage() {
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // REDIRECCIÓN REAL
-      router.push('/dashboard');
+      // --- LÓGICA DE REDIRECCIÓN INTELIGENTE ---
+      if (data.user.role === 'STUDENT') {
+        // Si es alumno, va a su portal exclusivo
+        router.push('/student-portal');
+      } else {
+        // Si es Admin o Profesor, va al Dashboard de gestión
+        router.push('/dashboard');
+      }
 
     } catch (error) {
       console.error(error);

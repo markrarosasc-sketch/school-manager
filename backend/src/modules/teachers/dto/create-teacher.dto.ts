@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export class CreateStudentDto {
+export class CreateTeacherDto {
   @IsEmail()
   email: string;
 
@@ -14,5 +14,5 @@ export class CreateStudentDto {
 
   @IsString()
   @IsOptional()
-  sectionId?: string; // Opcional por ahora
+  specialization?: string; // Ej: "Matemáticas", "Ciencias"
 }

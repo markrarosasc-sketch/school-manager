@@ -22,7 +22,7 @@ enum UserRole {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String   // Hash bcrypt/argon2
+  password  String // Hash bcrypt/argon2
   firstName String
   lastName  String
   role      UserRole
@@ -34,9 +34,9 @@ model User {
   teacherProfile Teacher?
   studentProfile Student?
   parentProfile  Parent?
-  
+
   // Auditoría (Quién hizo qué)
-  auditLogs      AuditLog[]
+  auditLogs AuditLog[]
 
   @@map("users")
 }
@@ -47,61 +47,62 @@ model User {
 
 model AcademicYear {
   id        String   @id @default(uuid())
-  name      String   // Ej: "2024", "2025"
+  name      String // Ej: "2024", "2025"
   startDate DateTime
   endDate   DateTime
   isCurrent Boolean  @default(false) // Solo uno puede ser true
-  
-  terms     AcademicTerm[] // Bimestres, Trimestres
-  courses   Course[]       // Cursos dictados este año
+
+  terms             AcademicTerm[] // Bimestres, Trimestres
+  courses           Course[] // Cursos dictados este año
+  PaymentDefinition PaymentDefinition[]
 
   @@map("academic_years")
 }
 
 model AcademicTerm {
   id             String       @id @default(uuid())
-  name           String       // Ej: "I Bimestre"
+  name           String // Ej: "I Bimestre"
   academicYearId String
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
   startDate      DateTime
   endDate        DateTime
   isClosed       Boolean      @default(false) // Si true, ya no se pueden editar notas
 
-  assessments    Assessment[]
+  assessments Assessment[]
 
   @@map("academic_terms")
 }
 
 model Grade {
-  id          String    @id @default(uuid())
-  name        String    // Ej: "1ro Secundaria", "5to Primaria"
-  level       String    // Ej: "PRIMARIA", "SECUNDARIA" (Podría ser Enum)
-  
-  sections    Section[]
-  
+  id    String @id @default(uuid())
+  name  String // Ej: "1ro Secundaria", "5to Primaria"
+  level String // Ej: "PRIMARIA", "SECUNDARIA" (Podría ser Enum)
+
+  sections Section[]
+
   @@map("grades")
 }
 
 model Section {
-  id        String   @id @default(uuid())
-  name      String   // Ej: "A", "B", "Blue Group"
-  gradeId   String
-  grade     Grade    @relation(fields: [gradeId], references: [id])
-  
-  students  Student[] // Alumnos en esta sección (Snapshots anuales se manejarían en Enrollment)
-  courses   Course[]
+  id      String @id @default(uuid())
+  name    String // Ej: "A", "B", "Blue Group"
+  gradeId String
+  grade   Grade  @relation(fields: [gradeId], references: [id])
+
+  students Student[] // Alumnos en esta sección (Snapshots anuales se manejarían en Enrollment)
+  courses  Course[]
 
   @@unique([gradeId, name]) // No puede haber dos "1ro A"
   @@map("sections")
 }
 
 model Subject {
-  id          String   @id @default(uuid())
-  name        String   // Ej: "Matemáticas", "Historia"
-  code        String?  @unique // Ej: "MAT-001"
+  id          String  @id @default(uuid())
+  name        String // Ej: "Matemáticas", "Historia"
+  code        String? @unique // Ej: "MAT-001"
   description String?
 
-  courses     Course[] // Instancias de esta materia en diferentes secciones/años
+  courses Course[] // Instancias de esta materia en diferentes secciones/años
 
   @@map("subjects")
 }
@@ -111,23 +112,23 @@ model Subject {
 // --------------------------------------------------------
 
 model Teacher {
-  id             String   @id @default(uuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
+  id             String  @id @default(uuid())
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id])
   specialization String?
-  
-  coursesTaught  Course[] // Cursos que dicta
+
+  coursesTaught Course[] // Cursos que dicta
 
   @@map("teachers")
 }
 
 model Parent {
-  id          String    @id @default(uuid())
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id])
-  phone       String?
-  
-  children    Student[] // Relación muchos a muchos implícita o explícita
+  id     String  @id @default(uuid())
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+  phone  String?
+
+  children Student[] // Relación muchos a muchos implícita o explícita
 
   @@map("parents")
 }
@@ -137,15 +138,16 @@ model Student {
   userId         String   @unique
   user           User     @relation(fields: [userId], references: [id])
   enrollmentDate DateTime @default(now())
-  
+
   // Relación actual (simplificada para MVP)
-  sectionId      String?
-  section        Section? @relation(fields: [sectionId], references: [id])
-  
-  parents        Parent[]
-  
-  attendance     AttendanceRecord[]
-  grades         GradeEntry[]
+  sectionId String?
+  section   Section? @relation(fields: [sectionId], references: [id])
+
+  parents Parent[]
+
+  attendance AttendanceRecord[]
+  grades     GradeEntry[]
+  Payment    Payment[]
 
   @@map("students")
 }
@@ -153,21 +155,21 @@ model Student {
 // La "Instancia" de una materia. 
 // Ej: "Matemáticas para 1ro A en 2024 dictado por el Profe Juan"
 model Course {
-  id             String       @id @default(uuid())
-  subjectId      String
-  subject        Subject      @relation(fields: [subjectId], references: [id])
-  
-  sectionId      String
-  section        Section      @relation(fields: [sectionId], references: [id])
-  
-  teacherId      String
-  teacher        Teacher      @relation(fields: [teacherId], references: [id])
-  
+  id        String  @id @default(uuid())
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  sectionId String
+  section   Section @relation(fields: [sectionId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
   academicYearId String
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
 
-  assessments    Assessment[]
-  attendance     AttendanceSession[]
+  assessments Assessment[]
+  attendance  AttendanceSession[]
 
   @@map("courses")
 }
@@ -177,36 +179,36 @@ model Course {
 // --------------------------------------------------------
 
 model Assessment {
-  id             String       @id @default(uuid())
-  title          String       // Ej: "Examen Parcial", "Tarea 1"
-  weight         Float        // Peso en porcentaje (ej: 0.2 para 20%)
-  
-  courseId       String
-  course         Course       @relation(fields: [courseId], references: [id])
-  
-  termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id])
-  
-  gradeEntries   GradeEntry[] // Las notas de los alumnos para esta evaluación
+  id     String @id @default(uuid())
+  title  String // Ej: "Examen Parcial", "Tarea 1"
+  weight Float // Peso en porcentaje (ej: 0.2 para 20%)
 
-  createdAt      DateTime     @default(now())
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id])
+
+  termId String
+  term   AcademicTerm @relation(fields: [termId], references: [id])
+
+  gradeEntries GradeEntry[] // Las notas de los alumnos para esta evaluación
+
+  createdAt DateTime @default(now())
 
   @@map("assessments")
 }
 
 model GradeEntry {
-  id           String     @id @default(uuid())
-  value        Float      // La nota (ej: 18.5)
-  feedback     String?    // Comentario del profesor
-  
-  studentId    String
-  student      Student    @relation(fields: [studentId], references: [id])
-  
+  id       String  @id @default(uuid())
+  value    Float // La nota (ej: 18.5)
+  feedback String? // Comentario del profesor
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
   assessmentId String
   assessment   Assessment @relation(fields: [assessmentId], references: [id])
 
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([studentId, assessmentId]) // Un alumno solo tiene una nota por evaluación
   @@map("grade_entries")
@@ -224,12 +226,12 @@ enum AttendanceStatus {
 }
 
 model AttendanceSession {
-  id        String   @id @default(uuid())
-  date      DateTime @db.Date // Solo fecha, sin hora
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
-  
-  records   AttendanceRecord[]
+  id       String   @id @default(uuid())
+  date     DateTime @db.Date // Solo fecha, sin hora
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id])
+
+  records AttendanceRecord[]
 
   @@unique([date, courseId]) // Solo se toma lista una vez por día por curso
   @@map("attendance_sessions")
@@ -239,12 +241,12 @@ model AttendanceRecord {
   id        String            @id @default(uuid())
   sessionId String
   session   AttendanceSession @relation(fields: [sessionId], references: [id])
-  
+
   studentId String
-  student   Student           @relation(fields: [studentId], references: [id])
-  
-  status    AttendanceStatus
-  remarks   String?           // Ej: "Llegó 15 min tarde"
+  student   Student @relation(fields: [studentId], references: [id])
+
+  status  AttendanceStatus
+  remarks String? // Ej: "Llegó 15 min tarde"
 
   @@map("attendance_records")
 }
@@ -255,11 +257,74 @@ model AttendanceRecord {
 
 model AuditLog {
   id        String   @id @default(uuid())
-  action    String   // "UPDATE_GRADE", "DELETE_USER"
+  action    String // "UPDATE_GRADE", "DELETE_USER"
   details   Json?
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 
   @@map("audit_logs")
+}
+
+// --------------------------------------------------------
+// DOMINIO FINANCIERO (Tesorería)
+// --------------------------------------------------------
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE // Vencido
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSFER
+  CARD
+}
+
+// El "Catálogo" de cobros. Ej: "Pensión Marzo 2025 - Secundaria"
+model PaymentDefinition {
+  id          String   @id @default(uuid())
+  title       String // Ej: "Pensión Marzo"
+  description String?
+  amount      Float // Ej: 500.00
+  dueDate     DateTime // Fecha de vencimiento general
+
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+
+  // Relación: Un concepto genera muchos pagos individuales
+  payments Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payment_definitions")
+}
+
+// La deuda/pago individual de un alumno
+model Payment {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  definitionId String
+  definition   PaymentDefinition @relation(fields: [definitionId], references: [id])
+
+  status PaymentStatus @default(PENDING)
+
+  // Datos de cuando se paga
+  paidAt          DateTime? // Fecha real del pago
+  method          PaymentMethod?
+  operationNumber String? // Nro de operación bancaria o recibo
+
+  amountPaid Float? // Cuánto pagó realmente (por si hay mora o descuento)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, definitionId]) // Un alumno no debe tener duplicado el cobro de "Marzo"
+  @@map("payments")
 }

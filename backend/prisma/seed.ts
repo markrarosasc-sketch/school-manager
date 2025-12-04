@@ -61,7 +61,7 @@ async function main() {
   // ... código anterior del admin ...
 
 // 4. Crear Alumnos de Prueba
-const section1A = await prisma.section.findFirst({ where: { name: 'A' } });
+/*const section1A = await prisma.section.findFirst({ where: { name: 'A' } });
 
 if (section1A) {
   // Alumno 1
@@ -100,7 +100,87 @@ if (section1A) {
     }
   });
   console.log('👨‍🎓 Alumnos de prueba creados.');
-}
+}*/
+
+// 5. Crear Profesor de Prueba
+    /*await prisma.user.upsert({
+        where: { email: 'profe.jirafales@school.com' },
+        update: {},
+        create: {
+          email: 'profe.jirafales@school.com',
+          password: await bcrypt.hash('123456', 10),
+          firstName: 'Inocencio',
+          lastName: 'Jirafales',
+          role: UserRole.TEACHER,
+          teacherProfile: {
+            create: {
+              specialization: 'Matemáticas y Pedagogía'
+            }
+          }
+        }
+    });
+    console.log('👨‍🏫 Profesor creado.');*/
+
+    // ... código anterior ...
+
+    // 6. Crear Materias (Subjects)
+    /*const mathSubject = await prisma.subject.create({
+      data: { name: 'Matemáticas', code: 'MAT-101' }
+    });
+    const historySubject = await prisma.subject.create({
+      data: { name: 'Historia Universal', code: 'HIS-202' }
+    });
+    console.log('📚 Materias creadas.');
+
+    // 7. Crear un CURSO REAL (La unión de todo)
+    // Buscamos los IDs necesarios que creamos arriba
+    const teacher = await prisma.user.findUnique({ where: { email: 'profe.jirafales@school.com' }, include: { teacherProfile: true } });
+    const year = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
+    const section = await prisma.section.findFirst({ where: { name: 'A' } });
+
+    if (teacher?.teacherProfile && year && section) {
+      await prisma.course.create({
+        data: {
+          subjectId: mathSubject.id,
+          teacherId: teacher.teacherProfile.id,
+          sectionId: section.id,
+          academicYearId: year.id
+        }
+      });
+      console.log('🎓 Curso creado: Matemáticas 1ro A - 2025');
+    }*/
+
+    // ... código anterior ...
+
+  // 8. Generar Pensión de Marzo (Tesorería)
+  // Necesitamos el año académico
+  const yearForPayment = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
+  
+  if (yearForPayment) {
+    const pensionDef = await prisma.paymentDefinition.create({
+      data: {
+        title: 'Pensión Marzo 2025',
+        description: 'Cuota mensual regular',
+        amount: 500.00,
+        dueDate: new Date('2025-03-31'),
+        academicYearId: yearForPayment.id
+      }
+    });
+
+    // Asignar a todos los estudiantes que creamos antes
+    const allStudents = await prisma.student.findMany();
+    
+    for (const st of allStudents) {
+      await prisma.payment.create({
+        data: {
+          definitionId: pensionDef.id,
+          studentId: st.id,
+          status: 'PENDING'
+        }
+      });
+    }
+    console.log('💰 Pensiones de Marzo generadas.');
+  }
 }
 
 main()

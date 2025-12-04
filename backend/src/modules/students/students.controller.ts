@@ -5,7 +5,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(private readonly studentsService: StudentsService) { }
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
@@ -15,6 +15,16 @@ export class StudentsController {
   @Get()
   findAll() {
     return this.studentsService.findAll();
+  }
+
+  @Get('dashboard/:userId') // En producción: @Get('me') y sacas ID del request
+  getDashboard(@Param('userId') userId: string) {
+    return this.studentsService.getStudentDashboard(userId);
+  }
+
+  @Get(':id/report-card')
+  getReportCard(@Param('id') id: string) {
+    return this.studentsService.getReportCard(id);
   }
 
   /*@Get(':id')
