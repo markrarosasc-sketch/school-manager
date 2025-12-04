@@ -17,7 +17,7 @@ export default function StudentPortal() {
       setUser(u);
       
       // Llamamos al endpoint especial
-      fetch(`http://localhost:3000/students/dashboard/${u.id}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/dashboard/${u.id}`)
         .then(res => res.json())
         .then(setData)
         .catch(console.error);

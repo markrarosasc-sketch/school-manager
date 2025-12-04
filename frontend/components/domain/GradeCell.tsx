@@ -40,7 +40,7 @@ export default function GradeCell({ studentId, assessmentId, initialValue, onSuc
 
     setStatus('saving');
     try {
-      const res = await fetch(`http://localhost:3000/assessments/${assessmentId}/grades`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assessments/${assessmentId}/grades`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

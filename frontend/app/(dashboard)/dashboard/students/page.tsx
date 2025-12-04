@@ -26,7 +26,7 @@ export default function StudentsPage() {
   // Cargar datos iniciales
   const fetchStudents = async () => {
     try {
-      const response = await fetch('http://localhost:3000/students');
+      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/students');
       if (response.ok) {
         const data = await response.json();
         setStudents(data);
@@ -45,7 +45,7 @@ export default function StudentsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch('http://localhost:3000/students', {
+      const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/students', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -103,7 +103,7 @@ export default function StudentsPage() {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <a
-                    href={`http://localhost:3000/reports/student/${student.id}/pdf`}
+                    href={`${process.env.NEXT_PUBLIC_API_URL}/reports/student/${student.id}/pdf`}
                     target="_blank" // Abre en pestaña nueva e inicia descarga
                     className="text-blue-600 hover:text-blue-800 inline-flex items-center text-sm font-medium transition-colors"
                     title="Descargar PDF Oficial"

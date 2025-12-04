@@ -18,7 +18,7 @@ export default function TeachersPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3000/teachers')
+    fetch('${process.env.NEXT_PUBLIC_API_URL}/teachers')
       .then(res => res.json())
       .then(data => setTeachers(data))
       .catch(console.error)

@@ -10,7 +10,7 @@ export default function ReportCardPage() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/students/${params.studentId}/report-card`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/${params.studentId}/report-card`)
       .then(res => res.json())
       .then(setData)
       .catch(console.error);

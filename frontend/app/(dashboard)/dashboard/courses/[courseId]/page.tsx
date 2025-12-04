@@ -25,8 +25,8 @@ export default function CourseGradesPage() {
         try {
             // Cargar Curso (con alumnos) y Evaluaciones en paralelo
             const [resCourse, resAssessments] = await Promise.all([
-                fetch(`http://localhost:3000/courses/${courseId}`),
-                fetch(`http://localhost:3000/assessments/course/${courseId}`)
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseId}`),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/assessments/course/${courseId}`)
             ]);
 
             const courseData = await resCourse.json();
@@ -61,7 +61,7 @@ export default function CourseGradesPage() {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/assessments', {
+            const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/assessments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

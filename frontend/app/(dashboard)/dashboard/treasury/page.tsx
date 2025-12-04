@@ -10,7 +10,7 @@ export default function TreasuryPage() {
 
   // Cargar deudores
   const fetchDebtors = () => {
-    fetch('http://localhost:3000/treasury/debtors')
+    fetch('${process.env.NEXT_PUBLIC_API_URL}/treasury/debtors')
       .then(res => res.json())
       .then(setStudents)
       .finally(() => setLoading(false));
@@ -26,7 +26,7 @@ export default function TreasuryPage() {
     
     setProcessingId(paymentId);
     try {
-      const res = await fetch(`http://localhost:3000/treasury/pay/${paymentId}`, { method: 'POST' });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/treasury/pay/${paymentId}`, { method: 'POST' });
       if (res.ok) {
         alert('Pago registrado con éxito 💰');
         fetchDebtors(); // Recargar la lista

@@ -20,7 +20,7 @@ export default function CoursesPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:3000/courses')
+        fetch('${process.env.NEXT_PUBLIC_API_URL}/courses')
             .then(res => res.json())
             .then(data => setCourses(data))
             .catch(console.error)

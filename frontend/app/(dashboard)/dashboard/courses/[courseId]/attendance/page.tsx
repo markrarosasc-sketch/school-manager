@@ -26,7 +26,7 @@ export default function AttendancePage() {
 
   // 1. Cargar Alumnos del Curso
   useEffect(() => {
-    fetch(`http://localhost:3000/courses/${courseId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseId}`)
       .then(res => res.json())
       .then(data => {
         if (data.section?.students) {
@@ -38,7 +38,7 @@ export default function AttendancePage() {
   // 2. Cargar Asistencia cuando cambia la fecha
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3000/attendance?courseId=${courseId}&date=${selectedDate}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/attendance?courseId=${courseId}&date=${selectedDate}`)
       .then(res => res.json())
       .then(records => {
         // Convertimos el array de registros en un Mapa { studentId: status } para acceso rápido
@@ -55,7 +55,7 @@ export default function AttendancePage() {
     setAttendanceMap(prev => ({ ...prev, [studentId]: status }));
 
     try {
-      await fetch('http://localhost:3000/attendance', {
+      await fetch('${process.env.NEXT_PUBLIC_API_URL}/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
