@@ -14,7 +14,7 @@ export default function DashboardHome() {
     if (userData) setUser(JSON.parse(userData));
 
     // 2. Cargar Estadísticas Reales
-    fetch('http://localhost:3000/dashboard/stats')
+    fetch('${process.env.NEXT_PUBLIC_API_URL}/dashboard/stats')
       .then(res => res.json())
       .then(setStats)
       .catch(console.error)

@@ -39,7 +39,7 @@ async function main() {
       }
     }
   });
-  console.log('🏫 Grados creados.');
+  console.log('🏫 Grados creados.');*/
 
   // 3. Crear Usuario Super Admin
   const hashedPassword = await bcrypt.hash('123456', 10);
@@ -56,7 +56,7 @@ async function main() {
     },
   });
 
-  console.log('👮 Admin creado: admin@school.com / 123456');*/
+  console.log('👮 Admin creado: admin@school.com / 123456');
 
   // ... código anterior del admin ...
 

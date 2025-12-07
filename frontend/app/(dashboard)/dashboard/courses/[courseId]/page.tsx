@@ -256,7 +256,7 @@ export default function CourseGradesPage() {
                                     min="1" max="100"
                                     className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                                     value={newAssessment.weight}
-                                    onChange={e => setNewAssessment({ ...newAssessment, weight: e.target.value })}
+                                    onChange={e => setNewAssessment({ ...newAssessment, weight: Number(e.target.value) })}
                                 />
                             </div>
                             <button
