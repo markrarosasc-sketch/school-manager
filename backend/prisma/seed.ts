@@ -154,7 +154,7 @@ if (section1A) {
 
   // 8. Generar Pensión de Marzo (Tesorería)
   // Necesitamos el año académico
-  const yearForPayment = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
+  /*const yearForPayment = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
   
   if (yearForPayment) {
     const pensionDef = await prisma.paymentDefinition.create({
@@ -180,7 +180,7 @@ if (section1A) {
       });
     }
     console.log('💰 Pensiones de Marzo generadas.');
-  }
+  }*/
 }
 
 main()
